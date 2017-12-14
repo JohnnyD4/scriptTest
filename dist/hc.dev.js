@@ -407,7 +407,7 @@
         }
         tagFields.timestamp = new Date().toISOString();
         tagFields.event_tag = tag;
-  
+        alert('click');
         return tagFields;
       } else {
         tagFields.state = heirial2.state;
@@ -429,7 +429,10 @@
         var api_key = document.querySelector('script[api-key]').getAttribute('api-key');
         window.heirialConfig = { api_key: api_key };
       }
-      console.log(fields);
+      if (fields.event_tag === 'ClickEvent') {
+        alert('click');
+      }
+      console.log(fields.event_tag);
       fields.config = window.heirialConfig;
       heirial2._Ajax.post(this._intake + '/' + endpoint, fields);
     };
