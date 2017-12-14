@@ -427,7 +427,7 @@
         var api_key = document.querySelector('script[api-key]').getAttribute('api-key');
         window.heirialConfig = { api_key: api_key };
       }
-  
+      console.log(fields);
       fields.config = window.heirialConfig;
       heirial2._Ajax.post(this._intake + '/' + endpoint, fields);
     };
