@@ -286,6 +286,8 @@
   
     HeirialEventManager.prototype.bind = function bind(element, eventName, callback) {
       if (this._document.addEventListener) {
+        console.log('berfore', window.beforeunload);
+        console.log('onberfore', window.onbeforeunload);
         element.addEventListener(eventName, callback);
       } else if (this._document.attachEvent) {
         element.attachEvent('on' + eventName, callback);
