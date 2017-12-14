@@ -1,12 +1,23 @@
 <!doctype html>
 <html>
   <head>
-      <!-- <script>
-          var heirialConfig = {
-            api_key: '12346855749949496476946474'
-          }  
-        </script> -->
-    <script src="dist/hc.dev.js"></script>
+        <script>
+            (function(){
+              var h = document.createElement('script');
+              h.type='text/javascript';
+              // h.api_key='a1234456-b123-c123-d123-e12345678912';
+              h.setAttribute('api-key', 'a1234456-b123-c123-d123-e12345678912');
+              h.async=true;
+              h.src='dist/hc.dev.js';
+              s=document.scripts[0];s.parentNode.insertBefore(h,s);
+            })();
+            </script>
+            <!-- <script>
+                var heirialConfig = {
+                  api_key: 'a1234456-b123-c123-d123-e12345678912'
+                }  
+              </script>
+    <script src="dist/hc.dev.js"></script> -->
   </head> 
   <body>
     <a href="http://facebook.com">Facebook</a>
