@@ -552,7 +552,7 @@
   
     HeirialCore.prototype._bindEvents = function _bindEvents() {
       this._Event.bind(window, 'load', this._Event.fire.bind(this, 'LoadEvent'));
-      this._Event.bind(window, 'beforeunload', this._Event.fire.bind(this, 'UnloadEvent'));
+      this._Event.bind(window, 'onbeforeunload', this._Event.fire.bind(this, 'UnloadEvent'));
       this._Event.track();
     };
   
