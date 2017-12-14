@@ -66,7 +66,13 @@
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
-
+  var hrefs = document.getElementsByTagName('a');
+  
+  for (i = 0; i < hrefs.length; i++) {
+      hrefs[i].addEventListener("click", function(event) {
+          console.log(event);
+      })
+  }
   "use strict";
   
   
