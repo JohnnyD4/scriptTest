@@ -1,1 +1,661 @@
-!function(t){function e(n){if(i[n])return i[n].exports;var o=i[n]={i:n,l:!1,exports:{}};return t[n].call(o.exports,o,o.exports,e),o.l=!0,o.exports}var i={};e.m=t,e.c=i,e.d=function(t,i,n){e.o(t,i)||Object.defineProperty(t,i,{configurable:!1,enumerable:!0,get:n})},e.n=function(t){var i=t&&t.__esModule?function(){return t.default}:function(){return t};return e.d(i,"a",i),i},e.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},e.p="",e(e.s=4)}([function(t,e,i){"use strict";function n(t,e,i){var n=e&&i||0;"string"==typeof t&&(e="binary"==t?new Array(16):null,t=null),t=t||{};var a=t.random||(t.rng||o)();if(a[6]=15&a[6]|64,a[8]=63&a[8]|128,e)for(var s=0;s<16;++s)e[n+s]=a[s];return e||r(a)}var o=i(6),r=i(8);t.exports=n},function(t,e,i){"use strict";function n(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}e.__esModule=!0;var o=function(){function t(e){var i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};n(this,t),this.navigator=i.navigator||window.navigator,this._allowBeacons=i.allowBeacons||!1}return t.prototype.post=function(t,e){this._allowBeacons&&this.navigator.sendBeacon?this._sendBeacon(t,e):"withCredentials"in new XMLHttpRequest?this._sendXHR(t,e):"undefined"!=typeof XDomainRequest&&this._sendXDR(t,e)},t.prototype._sendBeacon=function(t,e){navigator.sendBeacon(t,JSON.stringify(e))},t.prototype._sendXHR=function(t,e){var i=new XMLHttpRequest;i.open("POST",t,!0);try{i.send(JSON.stringify(e))}catch(t){var n=void 0;n="ClickEvent"===e.event_tag?{current_url:e.data.current_url,referrer:e.data.referrer,isTrusted:e.data.isTrusted,element:{attributes:{},html:e.data.element.html,text:e.data.element.text}}:{current_url:e.data.current_url,referrer:e.data.referrer,isTrusted:e.data.isTrusted};var o={data:n,event_tag:e.event_tag,load_uid:e.load_uid,state:e.state,timestamp:e.timestamp,uid:e.uid,config:window.heirialConfig};i.send(JSON.stringify(o))}},t.prototype._sendXDR=function(t,e){var i=new XDomainRequest;i.open("POST",t),i.onload=function(){},i.send(JSON.stringify(e))},t}();e.default=o},function(t,e,i){"use strict";function n(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}e.__esModule=!0;var o=function(){function t(e){n(this,t),this._document=e.document||document}return t.prototype.get=function(t){var e=this._document.cookie.match(new RegExp(t+"=([^\\s;]*)"));return t&&e?unescape(e[1]):""},t.prototype.set=function(t,e){var i=arguments.length>2&&void 0!==arguments[2]?arguments[2]:"Tue, 19 Jan 2038 03:14:07 UTC",n=navigator.appName.indexOf("Internet Explorer");this._document.cookie=n?t+"="+e+"; path=/":t+"="+e+"; expires="+i+"; path=/"},t.prototype.session=function(t,e){this.set(t,e,"")},t}();e.default=o},function(t,e,i){"use strict";function n(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}e.__esModule=!0;var o=i(0),r=[{selectors:["a","button"],name:"click",tag:"ClickEvent"}],a=function(){function t(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:{};n(this,t),this.apiVersion="staging",this._location={current_url:window.location.href,referrer:document.referrer},this._document=e.document||document,this._AJAX=e._AJAX,this._intake=e.intake||"https://api.heirial.com/"+this.apiVersion,this._loadEventFired=!1,this._queue=[]}return t.prototype.bind=function(t,e,i){this._document.addEventListener?t.addEventListener(e,i):this._document.attachEvent&&t.attachEvent("on"+e,i)},t.prototype.track=function(){var t=arguments.length>0&&void 0!==arguments[0]?arguments[0]:r;window.onload=function(){for(var e=0,i=t.length;e<i;e+=1)for(var n=window.document.querySelectorAll(t[e].selectors.join(",")),o=0,r=n.length;o<r;o+=1){var a=heirial2._Event.fire.bind(this,t[e].tag);heirial2._Event.bind(n[o],t[e].name,a)}}},t.prototype.fire=function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{},i=heirial2._Event._getEndpoint(t),n=heirial2._Event._getTagFields(t),o=heirial2._Event._buildFields(t,e,n);if(heirial2._Event._loadEventFired)"LoadEvent"!==t&&heirial2._Event._send(i,o);else{for("LoadEvent"!==t&&heirial2._Event._queue.push({endpoint:i,fields:o});heirial2._Event._queue.length;){var r=heirial2._Event._queue.shift();heirial2._Event._send(r.endpoint,r.fields)}heirial2._Event._send(i,o),heirial2._Event._loadEventFired=!0}},t.prototype.map=function(t,e,i){this._send("map",{data:{current_url:this.currentUrl},reason:i,uid_1:t,uid_2:e})},t.prototype._getEndpoint=function(t){return"LoadEvent"===t?"intake/load":"intake/page"},t.prototype._getTagFields=function(t){var e=void 0,i=void 0;return"LoadEvent"===t?(e=heirial2.loadUid,i="0"):(i=heirial2.loadUid,e="UnloadEvent"===t?heirial2.visitUid:o()),{uid:e,load_uid:i}},t.prototype._buildFields=function(t,e,i){var n=e.target,o={},r={element:{attributes:o}};if("ClickEvent"===t){Object.keys(n.attributes).map(function(t,e){n.attributes[t]&&(r.element.attributes[n.attributes[t].name]=n.attributes[t].value)}),r.element.text=n.innerHTML,r.element.html=n.outerHTML,i.state=heirial2.state,i.data=this._location;for(var a=Object.keys(r),s=0;s<a.length;s+=1)i.data[a[s]]=r[a[s]];return i.timestamp=(new Date).toISOString(),i.event_tag=t,i}i.state=heirial2.state,i.data=this._location;for(var u=Object.keys(e),d=0;d<u.length;d+=1)i.data[u[d]]=e[u[d]];return i.timestamp=(new Date).toISOString(),i.event_tag=t,i},t.prototype._send=function(t,e){if(document.querySelector("script[api-key]")&&!window.heirialConfig){var i=document.querySelector("script[api-key]").getAttribute("api-key");window.heirialConfig={api_key:i}}e.config=window.heirialConfig,heirial2._Ajax.post(this._intake+"/"+t,e)},t}();e.default=a},function(t,e,i){"use strict";function n(t){return t&&t.__esModule?t:{default:t}}var o=i(5),r=n(o),a=i(1),s=n(a),u=i(2),d=n(u),l=i(3),c=n(l);!window.heirial2&&navigator.cookieEnabled&&(window.heirial2=new r.default({AjaxInterface:new s.default,CookieManager:new d.default(document),EventManager:new c.default},window.heirialConfig||{}))},function(t,e,i){"use strict";function n(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}e.__esModule=!0;var o=i(0),r=(i(1),i(2),i(3),function(){function t(e){var i=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};n(this,t),this._Ajax=e.AjaxInterface,this._Cookie=e.CookieManager,this._Event=e.EventManager,this._options=i,this.version="2.0.0-dev",this.visitorUid=this._getVisitorUid(),this.visitUid=this._getVisitUid(),this.loadUid=this._getLoadUid(),this.state=this._buildState(),this._setCookies(),this._bindEvents(),this.fire=this._Event.fire}return t.prototype._getVisitorUid=function(){var t=this._Cookie.get("heirial2.uid");if(!t){var e=this._Cookie.get("heirial.uid");t=o(),e&&this._Event.map(e,t,"Automatic migration from 1.0.0 to "+this.version)}return t},t.prototype._getVisitUid=function(){return this._Cookie.get("heirial2.vid")||o()},t.prototype._getLoadUid=function(){return o()},t.prototype._buildState=function(){return this.visitorUid+"::"+this.visitUid+"::"+this.loadUid},t.prototype._setCookies=function(){this._Cookie.set("heirial2",this.state),this._Cookie.set("heirial2.uid",this.visitorUid),this._Cookie.session("heirial2.vid",this.visitUid),this._Cookie.set("heirial2.lid",this.loadUid)},t.prototype._bindEvents=function(){this._Event.bind(window,"load",this._Event.fire.bind(this,"LoadEvent")),this._Event.bind(window,"beforeunload",this._Event.fire.bind(this,"UnloadEvent")),this._Event.track()},t}());e.default=r},function(t,e,i){"use strict";(function(e){var i,n=e.crypto||e.msCrypto;if(n&&n.getRandomValues){var o=new Uint8Array(16);i=function(){return n.getRandomValues(o),o}}if(!i){var r=new Array(16);i=function(){for(var t,e=0;e<16;e++)0==(3&e)&&(t=4294967296*Math.random()),r[e]=t>>>((3&e)<<3)&255;return r}}t.exports=i}).call(e,i(7))},function(t,e,i){"use strict";var n,o="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t};n=function(){return this}();try{n=n||Function("return this")()||(0,eval)("this")}catch(t){"object"===("undefined"==typeof window?"undefined":o(window))&&(n=window)}t.exports=n},function(t,e,i){"use strict";function n(t,e){var i=e||0,n=o;return n[t[i++]]+n[t[i++]]+n[t[i++]]+n[t[i++]]+"-"+n[t[i++]]+n[t[i++]]+"-"+n[t[i++]]+n[t[i++]]+"-"+n[t[i++]]+n[t[i++]]+"-"+n[t[i++]]+n[t[i++]]+n[t[i++]]+n[t[i++]]+n[t[i++]]+n[t[i++]]}for(var o=[],r=0;r<256;++r)o[r]=(r+256).toString(16).substr(1);t.exports=n}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+  "use strict";
+  
+  
+  var rng = __webpack_require__(6);
+  var bytesToUuid = __webpack_require__(8);
+  
+  function v4(options, buf, offset) {
+    var i = buf && offset || 0;
+  
+    if (typeof options == 'string') {
+      buf = options == 'binary' ? new Array(16) : null;
+      options = null;
+    }
+    options = options || {};
+  
+    var rnds = options.random || (options.rng || rng)();
+  
+    // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
+    rnds[6] = rnds[6] & 0x0f | 0x40;
+    rnds[8] = rnds[8] & 0x3f | 0x80;
+  
+    // Copy bytes to buffer, if provided
+    if (buf) {
+      for (var ii = 0; ii < 16; ++ii) {
+        buf[i + ii] = rnds[ii];
+      }
+    }
+  
+    return buf || bytesToUuid(rnds);
+  }
+  
+  module.exports = v4;
+  
+  /***/ }),
+  /* 1 */
+  /***/ (function(module, exports, __webpack_require__) {
+  
+  "use strict";
+  
+  
+  exports.__esModule = true;
+  
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  
+  var HeirialAjaxInterface = function () {
+    function HeirialAjaxInterface(dependencies) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  
+      _classCallCheck(this, HeirialAjaxInterface);
+  
+      this.navigator = options.navigator || window.navigator;
+      this._allowBeacons = options.allowBeacons || false;
+    }
+  
+    HeirialAjaxInterface.prototype.post = function post(url, fields) {
+      if (this._allowBeacons && this.navigator.sendBeacon) {
+        this._sendBeacon(url, fields);
+      } else if ('withCredentials' in new XMLHttpRequest()) {
+        this._sendXHR(url, fields);
+      } else if (typeof XDomainRequest !== 'undefined') {
+        this._sendXDR(url, fields);
+      }
+  
+      // failed
+    };
+  
+    HeirialAjaxInterface.prototype._sendBeacon = function _sendBeacon(url, fields) {
+      navigator.sendBeacon(url, JSON.stringify(fields));
+    };
+  
+    HeirialAjaxInterface.prototype._sendXHR = function _sendXHR(url, fields) {
+      var xhr = new XMLHttpRequest();
+  
+      xhr.open('POST', url, true);
+      if (fields.event_tag === 'ClickEvent') {
+        alert('click');
+      }
+      //
+      // If issues with old version of ios (ios 7)
+      // it builds default field to send
+      //  
+      try {
+        xhr.send(JSON.stringify(fields));
+      } catch (err) {
+        var data = void 0;
+  
+        if (fields.event_tag === 'ClickEvent') {
+          data = {
+            current_url: fields.data.current_url,
+            referrer: fields.data.referrer,
+            isTrusted: fields.data.isTrusted,
+            element: {
+              attributes: {},
+              html: fields.data.element.html,
+              text: fields.data.element.text
+            }
+          };
+        } else {
+          data = {
+            current_url: fields.data.current_url,
+            referrer: fields.data.referrer,
+            isTrusted: fields.data.isTrusted
+          };
+        }
+        var defaultFields = {
+          data: data,
+          event_tag: fields.event_tag,
+          load_uid: fields.load_uid,
+          state: fields.state,
+          timestamp: fields.timestamp,
+          uid: fields.uid,
+          config: window.heirialConfig
+        };
+        xhr.send(JSON.stringify(defaultFields));
+      }
+    };
+  
+    HeirialAjaxInterface.prototype._sendXDR = function _sendXDR(url, fields) {
+      var xdr = new XDomainRequest();
+  
+      xdr.open('POST', url);
+      xdr.onload = function () {};
+      xdr.send(JSON.stringify(fields));
+    };
+  
+    return HeirialAjaxInterface;
+  }();
+  
+  exports.default = HeirialAjaxInterface;
+  
+  /***/ }),
+  /* 2 */
+  /***/ (function(module, exports, __webpack_require__) {
+  
+  "use strict";
+  
+  
+  exports.__esModule = true;
+  
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  
+  var DEFAULT_COOKIE_EXPIRES = 'Tue, 19 Jan 2038 03:14:07 UTC';
+  
+  var HeirialCookieManager = function () {
+    function HeirialCookieManager(dependencies) {
+      _classCallCheck(this, HeirialCookieManager);
+  
+      this._document = dependencies.document || document;
+    }
+  
+    HeirialCookieManager.prototype.get = function get(key) {
+      var match = this._document.cookie.match(new RegExp(key + '=([^\\s;]*)'));
+  
+      return key && match ? unescape(match[1]) : '';
+    };
+  
+    HeirialCookieManager.prototype.set = function set(key, value) {
+      var expires = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : DEFAULT_COOKIE_EXPIRES;
+  
+      var isIE = navigator.appName.indexOf('Internet Explorer');
+  
+      // 
+      // Sets the cookie differently if browser
+      // is Internet Explorer
+      // 
+      if (isIE) {
+        this._document.cookie = key + '=' + value + '; path=/';
+      } else {
+        this._document.cookie = key + '=' + value + '; expires=' + expires + '; path=/';
+      }
+    };
+  
+    HeirialCookieManager.prototype.session = function session(key, value) {
+      this.set(key, value, '');
+    };
+  
+    return HeirialCookieManager;
+  }();
+  
+  exports.default = HeirialCookieManager;
+  
+  /***/ }),
+  /* 3 */
+  /***/ (function(module, exports, __webpack_require__) {
+  
+  "use strict";
+  
+  
+  exports.__esModule = true;
+  
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  
+  var uuid = __webpack_require__(0);
+  
+  var DEFAULT_TRACKER = [{
+    selectors: ['a', 'button'],
+    name: 'click',
+    tag: 'ClickEvent'
+  }];
+  
+  var HeirialEventManager = function () {
+    function HeirialEventManager() {
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  
+      _classCallCheck(this, HeirialEventManager);
+  
+      this.apiVersion = 'staging';
+      this._location = {
+        current_url: window.location.href,
+        referrer: document.referrer
+      };
+      this._document = options.document || document;
+      this._AJAX = options._AJAX;
+  
+      this._intake = options.intake || 'https://api.heirial.com/' + this.apiVersion;
+      this._loadEventFired = false;
+      this._queue = [];
+    }
+  
+    HeirialEventManager.prototype.bind = function bind(element, eventName, callback) {
+      if (this._document.addEventListener) {
+        element.addEventListener(eventName, callback);
+      } else if (this._document.attachEvent) {
+        element.attachEvent('on' + eventName, callback);
+      }
+    };
+  
+    HeirialEventManager.prototype.track = function track() {
+      var trackers = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_TRACKER;
+  
+  
+      //
+      // Wait for window to finish loading 
+      // to access the trackers
+      //  
+      window.onload = function () {
+        for (var i = 0, l = trackers.length; i < l; i += 1) {
+          var targets = window.document.querySelectorAll(trackers[i].selectors.join(','));
+  
+          for (var j = 0, m = targets.length; j < m; j += 1) {
+            var callback = heirial2._Event.fire.bind(this, trackers[i].tag);
+  
+            heirial2._Event.bind(targets[j], trackers[i].name, callback);
+          }
+        }
+      };
+    };
+  
+    HeirialEventManager.prototype.fire = function fire(tag) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  
+      var endpoint = heirial2._Event._getEndpoint(tag);
+      var tagFields = heirial2._Event._getTagFields(tag);
+      var fields = heirial2._Event._buildFields(tag, data, tagFields);
+  
+      if (!heirial2._Event._loadEventFired) {
+        if (tag !== 'LoadEvent') {
+          heirial2._Event._queue.push({ endpoint: endpoint, fields: fields });
+        };
+  
+        while (heirial2._Event._queue.length) {
+          var event = heirial2._Event._queue.shift();
+  
+          heirial2._Event._send(event.endpoint, event.fields);
+        }
+  
+        heirial2._Event._send(endpoint, fields);
+        heirial2._Event._loadEventFired = true;
+      } else if (tag !== 'LoadEvent') {
+        heirial2._Event._send(endpoint, fields);
+      }
+    };
+  
+    HeirialEventManager.prototype.map = function map(uid1, uid2, reason) {
+      this._send('map', {
+        data: {
+          current_url: this.currentUrl
+        },
+        reason: reason,
+        uid_1: uid1,
+        uid_2: uid2
+      });
+    };
+  
+    HeirialEventManager.prototype._getEndpoint = function _getEndpoint(tag) {
+      return tag === 'LoadEvent' ? 'intake/load' : 'intake/page';
+    };
+  
+    HeirialEventManager.prototype._getTagFields = function _getTagFields(tag) {
+      var uid = void 0;
+      var loadUid = void 0;
+  
+      if (tag === 'LoadEvent') {
+        uid = heirial2.loadUid;
+        loadUid = '0';
+      } else {
+        loadUid = heirial2.loadUid;
+  
+        if (tag === 'UnloadEvent') {
+          uid = heirial2.visitUid;
+        } else {
+          uid = uuid();
+        }
+      }
+  
+      return { uid: uid, load_uid: loadUid };
+    };
+  
+    HeirialEventManager.prototype._buildFields = function _buildFields(tag, data, tagFields) {
+      var attr = data.target;
+      var attributes = {};
+      var clickData = {
+        element: {
+          attributes: attributes
+        }
+      };
+  
+      // 
+      // Building tagFields object if it is a 
+      // click event. Adding element and attributes
+      // fields to object
+      // 
+      if (tag === 'ClickEvent') {
+        Object.keys(attr.attributes).map(function (key, index) {
+          if (attr.attributes[key]) {
+            clickData.element.attributes[attr.attributes[key].name] = attr.attributes[key].value;
+          }
+        });
+        clickData.element['text'] = attr.innerHTML;
+        clickData.element['html'] = attr.outerHTML;
+  
+        tagFields.state = heirial2.state;
+        tagFields.data = this._location;
+        var dataKeys = Object.keys(clickData);
+  
+        for (var i = 0; i < dataKeys.length; i += 1) {
+          tagFields.data[dataKeys[i]] = clickData[dataKeys[i]];
+        }
+        tagFields.timestamp = new Date().toISOString();
+        tagFields.event_tag = tag;
+  
+        return tagFields;
+      } else {
+        tagFields.state = heirial2.state;
+        tagFields.data = this._location;
+        var _dataKeys = Object.keys(data);
+  
+        for (var _i = 0; _i < _dataKeys.length; _i += 1) {
+          tagFields.data[_dataKeys[_i]] = data[_dataKeys[_i]];
+        }
+        tagFields.timestamp = new Date().toISOString();
+        tagFields.event_tag = tag;
+  
+        return tagFields;
+      }
+    };
+  
+    HeirialEventManager.prototype._send = function _send(endpoint, fields) {
+      if (document.querySelector('script[api-key]') && !window.heirialConfig) {
+        var api_key = document.querySelector('script[api-key]').getAttribute('api-key');
+        window.heirialConfig = { api_key: api_key };
+      }
+  
+      fields.config = window.heirialConfig;
+      heirial2._Ajax.post(this._intake + '/' + endpoint, fields);
+    };
+  
+    return HeirialEventManager;
+  }();
+  
+  exports.default = HeirialEventManager;
+  
+  /***/ }),
+  /* 4 */
+  /***/ (function(module, exports, __webpack_require__) {
+  
+  "use strict";
+  
+  
+  var _HeirialCore = __webpack_require__(5);
+  
+  var _HeirialCore2 = _interopRequireDefault(_HeirialCore);
+  
+  var _HeirialAjaxInterface = __webpack_require__(1);
+  
+  var _HeirialAjaxInterface2 = _interopRequireDefault(_HeirialAjaxInterface);
+  
+  var _HeirialCookieManager = __webpack_require__(2);
+  
+  var _HeirialCookieManager2 = _interopRequireDefault(_HeirialCookieManager);
+  
+  var _HeirialEventManager = __webpack_require__(3);
+  
+  var _HeirialEventManager2 = _interopRequireDefault(_HeirialEventManager);
+  
+  function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  
+  if (!window.heirial2 && navigator.cookieEnabled) {
+    window.heirial2 = new _HeirialCore2.default({
+      AjaxInterface: new _HeirialAjaxInterface2.default(),
+      CookieManager: new _HeirialCookieManager2.default(document),
+      EventManager: new _HeirialEventManager2.default()
+    }, window.heirialConfig || {});
+  }
+  
+  /***/ }),
+  /* 5 */
+  /***/ (function(module, exports, __webpack_require__) {
+  
+  "use strict";
+  
+  
+  exports.__esModule = true;
+  
+  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  
+  var uuid = __webpack_require__(0);
+  
+  var AjaxInterface = __webpack_require__(1);
+  var CookieManager = __webpack_require__(2);
+  var EventManager = __webpack_require__(3);
+  
+  var STATE_SEPARATOR = '::';
+  
+  var HeirialCore = function () {
+    function HeirialCore(dependencies) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  
+      _classCallCheck(this, HeirialCore);
+  
+      this._Ajax = dependencies.AjaxInterface;
+      this._Cookie = dependencies.CookieManager;
+      this._Event = dependencies.EventManager;
+      this._options = options;
+  
+      this.version = '2.0.0-dev';
+      this.visitorUid = this._getVisitorUid();
+      this.visitUid = this._getVisitUid();
+      this.loadUid = this._getLoadUid();
+      this.state = this._buildState();
+  
+      this._setCookies();
+      this._bindEvents();
+  
+      this.fire = this._Event.fire;
+    }
+  
+    HeirialCore.prototype._getVisitorUid = function _getVisitorUid() {
+      var visitorUid = this._Cookie.get('heirial2.uid');
+  
+      if (!visitorUid) {
+        // Check if they have a v1 uid
+        var oldUid = this._Cookie.get('heirial.uid');
+        visitorUid = uuid();
+  
+        // If they do, migrate it and send it back to be mapped
+        if (oldUid) {
+          this._Event.map(oldUid, visitorUid, 'Automatic migration from 1.0.0 to ' + this.version);
+        }
+      }
+  
+      return visitorUid;
+    };
+  
+    HeirialCore.prototype._getVisitUid = function _getVisitUid() {
+      return this._Cookie.get('heirial2.vid') || uuid();
+    };
+  
+    HeirialCore.prototype._getLoadUid = function _getLoadUid() {
+      return uuid();
+    };
+  
+    HeirialCore.prototype._buildState = function _buildState() {
+      return '' + this.visitorUid + STATE_SEPARATOR + this.visitUid + STATE_SEPARATOR + this.loadUid;
+    };
+  
+    HeirialCore.prototype._setCookies = function _setCookies() {
+      this._Cookie.set('heirial2', this.state);
+      this._Cookie.set('heirial2.uid', this.visitorUid);
+      this._Cookie.session('heirial2.vid', this.visitUid);
+      this._Cookie.set('heirial2.lid', this.loadUid);
+    };
+  
+    HeirialCore.prototype._bindEvents = function _bindEvents() {
+      this._Event.bind(window, 'load', this._Event.fire.bind(this, 'LoadEvent'));
+      this._Event.bind(window, 'beforeunload', this._Event.fire.bind(this, 'UnloadEvent'));
+      this._Event.track();
+    };
+  
+    return HeirialCore;
+  }();
+  
+  exports.default = HeirialCore;
+  
+  /***/ }),
+  /* 6 */
+  /***/ (function(module, exports, __webpack_require__) {
+  
+  "use strict";
+  /* WEBPACK VAR INJECTION */(function(global) {
+  
+  // Unique ID creation requires a high quality random # generator.  In the
+  // browser this is a little complicated due to unknown quality of Math.random()
+  // and inconsistent support for the `crypto` API.  We do the best we can via
+  // feature-detection
+  var rng;
+  
+  var crypto = global.crypto || global.msCrypto; // for IE 11
+  if (crypto && crypto.getRandomValues) {
+    // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
+    var rnds8 = new Uint8Array(16); // eslint-disable-line no-undef
+    rng = function whatwgRNG() {
+      crypto.getRandomValues(rnds8);
+      return rnds8;
+    };
+  }
+  
+  if (!rng) {
+    // Math.random()-based (RNG)
+    //
+    // If all else fails, use Math.random().  It's fast, but is of unspecified
+    // quality.
+    var rnds = new Array(16);
+    rng = function rng() {
+      for (var i = 0, r; i < 16; i++) {
+        if ((i & 0x03) === 0) r = Math.random() * 0x100000000;
+        rnds[i] = r >>> ((i & 0x03) << 3) & 0xff;
+      }
+  
+      return rnds;
+    };
+  }
+  
+  module.exports = rng;
+  /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+  
+  /***/ }),
+  /* 7 */
+  /***/ (function(module, exports, __webpack_require__) {
+  
+  "use strict";
+  
+  
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+  
+  var g;
+  
+  // This works in non-strict mode
+  g = function () {
+    return this;
+  }();
+  
+  try {
+    // This works if eval is allowed (see CSP)
+    g = g || Function("return this")() || (1, eval)("this");
+  } catch (e) {
+    // This works if the window reference is available
+    if ((typeof window === "undefined" ? "undefined" : _typeof(window)) === "object") g = window;
+  }
+  
+  // g can still be undefined, but nothing to do about it...
+  // We return undefined, instead of nothing here, so it's
+  // easier to handle this case. if(!global) { ...}
+  
+  module.exports = g;
+  
+  /***/ }),
+  /* 8 */
+  /***/ (function(module, exports, __webpack_require__) {
+  
+  "use strict";
+  
+  
+  /**
+   * Convert array of 16 byte values to UUID string format of the form:
+   * XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+   */
+  var byteToHex = [];
+  for (var i = 0; i < 256; ++i) {
+    byteToHex[i] = (i + 0x100).toString(16).substr(1);
+  }
+  
+  function bytesToUuid(buf, offset) {
+    var i = offset || 0;
+    var bth = byteToHex;
+    return bth[buf[i++]] + bth[buf[i++]] + bth[buf[i++]] + bth[buf[i++]] + '-' + bth[buf[i++]] + bth[buf[i++]] + '-' + bth[buf[i++]] + bth[buf[i++]] + '-' + bth[buf[i++]] + bth[buf[i++]] + '-' + bth[buf[i++]] + bth[buf[i++]] + bth[buf[i++]] + bth[buf[i++]] + bth[buf[i++]] + bth[buf[i++]];
+  }
+  
+  module.exports = bytesToUuid;
+  
+  /***/ })
+  /******/ ]);
