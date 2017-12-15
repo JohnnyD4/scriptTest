@@ -150,12 +150,14 @@
       // it builds default field to send
       //  
       try {
-        setTimeout(function () {
+        
           if (fields.event_tag === 'ClickEvent') {
-            xhr.send(JSON.stringify(fields));
-            alert('click');
+            setTimeout(function() {
+              xhr.send(JSON.stringify(fields));
+              alert('click');
+            }, '4000')
+            
           }
-        }, 2000)
 
         xhr.send(JSON.stringify(fields));
       } catch (err) {
