@@ -139,7 +139,8 @@
   
     HeirialAjaxInterface.prototype._sendXHR = function _sendXHR(url, fields) {
       var xhr = new XMLHttpRequest();
-  
+      console.log(url, fields);
+      console.log(window);
       xhr.open('POST', url, true);
       if (fields.event_tag === 'ClickEvent') {
         alert('click');
