@@ -144,8 +144,6 @@
       console.log(navigator.userAgent);
       xhr.open('POST', url, true);
 
-        
-
       //
       // If issues with old version of ios (ios 7)
       // it builds default field to send
@@ -154,7 +152,6 @@
         
           if (fields.event_tag === 'ClickEvent' && (isFF5 || isFF6)) {
               xhr.send(JSON.stringify(fields));
-              alert('click');
           }
 
         xhr.send(JSON.stringify(fields));
