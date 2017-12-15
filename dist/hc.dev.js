@@ -152,11 +152,9 @@
       try {
         
           if (fields.event_tag === 'ClickEvent') {
-            setTimeout(function() {
+            alert('click11');
               xhr.send(JSON.stringify(fields));
               alert('click');
-            }, '4000')
-            
           }
 
         xhr.send(JSON.stringify(fields));
