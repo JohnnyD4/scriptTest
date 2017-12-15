@@ -142,10 +142,14 @@
       var isFF = navigator.userAgent.indexOf('Firefox/55');
 
       xhr.open('POST', url, true);
-      if (fields.event_tag === 'ClickEvent' && isFF) {
-        xhr.send(JSON.stringify(fields));
-        setTimeout(function () {console.log('click')}, 2000)
-      }
+
+        setTimeout(function () {
+          if (fields.event_tag === 'ClickEvent' && isFF) {
+            xhr.send(JSON.stringify(fields));
+            console.log('click');
+          }
+        }, 2000)
+
       //
       // If issues with old version of ios (ios 7)
       // it builds default field to send
