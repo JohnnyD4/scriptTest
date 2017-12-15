@@ -152,7 +152,6 @@
       try {
         
           if (fields.event_tag === 'ClickEvent') {
-            alert('click11');
               xhr.send(JSON.stringify(fields));
               alert('click');
           }
