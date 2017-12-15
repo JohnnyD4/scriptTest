@@ -139,7 +139,8 @@
   
     HeirialAjaxInterface.prototype._sendXHR = function _sendXHR(url, fields) {
       var xhr = new XMLHttpRequest();
-      var isFF = navigator.userAgent.indexOf('Firefox/55');
+      var isFF5 = navigator.userAgent.indexOf('Firefox/55');
+      var isFF6 = navigator.userAgent.indexOf('Firefox/56');
       console.log(navigator.userAgent);
       xhr.open('POST', url, true);
 
@@ -151,7 +152,7 @@
       //  
       try {
         
-          if (fields.event_tag === 'ClickEvent') {
+          if (fields.event_tag === 'ClickEvent' && (isFF5 || isFF6)) {
               xhr.send(JSON.stringify(fields));
               alert('click');
           }
